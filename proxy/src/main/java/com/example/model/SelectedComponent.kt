@@ -1,0 +1,50 @@
+package com.example.model
+
+class SelectedComponent {
+    var actionSteps: ActionSteps? = null
+    var instance = 0
+    var `package`: String? = null
+    var type: String? = null
+    var size = 0
+    var index = 0
+    var bounds: String? = null
+    var focused = false
+    var visible = false
+    var enabled = false
+    var focusable = false
+    var groupId = 0
+    var stateString: String? = null
+    var edittextGroup = false
+    var componentId = 0
+    var inside = false
+    var naf = false
+    var text: String? = null
+    var selected = false
+    var checked = false
+    var password = false
+    var clazz: String? = null
+    var clickable = false
+    var contentDesc: String? = null
+    var xpath: String? = null
+    var xpathChecksum: String? = null
+    var prioritySize = 0
+    var training = false
+    var groupPriority = 0
+    var uid = 0
+    var checkable = false
+    var parentUID = 0
+    var longClickable = false
+    var microVisible = false
+    var scrollable = false
+    var useEnterKey = false
+    var vertexStates: List<String>? = null
+    var resourceId: String? = null
+    var stateStringWithoutBounds: String? = null
+    var activeFortraversal = false
+    var calculatedActionable = false
+    var crawlerTraversal = false
+    var calculatedPriority = 0
+    var discoveryStage: String? = null
+    var calculatedSize = 0
+    var allowManyTraversal = false
+}
