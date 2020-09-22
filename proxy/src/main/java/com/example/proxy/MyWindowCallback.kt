@@ -3,12 +3,15 @@ package com.example.proxy
 import android.R
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.graphics.Point
 import android.graphics.Rect
 import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
-import androidx.core.view.children
+import android.view.inputmethod.EditorInfo
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView.OnEditorActionListener
+import androidx.core.view.get
 import com.an.deviceinfo.device.model.App
 import com.an.deviceinfo.device.model.Device
 import com.example.model.*
@@ -27,19 +30,90 @@ class MyWindowCallback() : Window.Callback {
     val FILE_NAME: String = "File-name"
     val READ_BLOCK_SIZE = 10000
     var localCallback: Window.Callback? = null
-    var p0: Activity? = null
+    var activity: Activity? = null
     var mouseEventList: ArrayList<MouseEvent>? = null
     var mouseEventListFinal: ArrayList<MouseEvent>? = null
+    var finalView: View? = null
 
     companion object {
         const val FOO = "MyWindowCallback"
     }
 
-    constructor(localCallback: Window.Callback, p0: Activity) : this() {
-        this.p0 = p0
+    constructor(localCallback: Window.Callback, activity: Activity) : this() {
+        this.activity = activity
         this.localCallback = localCallback
         mouseEventList = arrayListOf()
+        var viewGroupSize =
+            ((this.activity?.window?.decorView?.findViewById<View>(R.id.content) as? ViewGroup)?.getChildAt(
+                0
+            ) as? ViewGroup)?.childCount
+
+        if (this.activity != null && this.activity?.window?.decorView?.findViewById<View>(R.id.content) as? ViewGroup != null) {
+
+
+            for (i in 0 until viewGroupSize!!) {
+                finalView =
+                    ((this.activity?.window?.decorView?.findViewById<View>(R.id.content) as? ViewGroup)?.getChildAt(
+                        0
+                    ) as? ViewGroup)?.get(i)
+                if (finalView is Button) {
+                    addOnTouchListener(finalView as Button)
+
+                } else if (finalView is EditText) {
+                    addSetTextListener(finalView as EditText)
+                }
+
+            }
+
+
+        }
     }
+
+    private fun addSetTextListener(finalView: EditText) {
+
+
+        finalView.imeOptions = EditorInfo.IME_ACTION_DONE
+
+        finalView.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                if (finalView.length() > 0) {
+                    Log.i(FOO, "EditView ${finalView.text}")
+
+                }
+
+            }
+            false
+        })
+
+
+
+    }
+
+    private fun addOnTouchListener(finalView: Button) {
+        this.finalView?.setOnTouchListener { view, motionEvent ->
+            Log.i(FOO, " rootViewGroupNEW viewcheck $view")
+
+            when (motionEvent?.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    Log.i(FOO, " rootViewGroup1 viewcheck ${view?.visibility}")
+                }
+                MotionEvent.ACTION_UP -> {
+                    val rootGlobalRect = Rect()
+                    Log.i(FOO, " rootViewGroup1 viewcheck ${view?.visibility}")
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 viewcheck ${
+                            view?.getFocusedRect(rootGlobalRect)
+                        }"
+                    )
+
+                }
+            }
+            true
+        }
+    }
+
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         return localCallback!!.dispatchKeyEvent(event)
@@ -102,8 +176,8 @@ class MyWindowCallback() : Window.Callback {
         if (localCallback!!.dispatchTouchEvent(event)) {
             //    Log.d(FOO, "Wrting on file")
 
-//            val rootViewGroup = p0?.window?.decorView?.findViewById<ViewGroup>(R.id.)?.childCount
-//            val getChildView = p0?.window?.decorView?.findViewById<ViewGroup>(R.id.content)?.children
+//            val rootViewGroup = activity?.window?.decorView?.findViewById<ViewGroup>(R.id.)?.childCount
+//            val getChildView = activity?.window?.decorView?.findViewById<ViewGroup>(R.id.content)?.children
 
 
 //            val x = event.x.toInt()
@@ -151,15 +225,11 @@ class MyWindowCallback() : Window.Callback {
                             actionCode
                         )
                     )
-//                    }
+
 
                 }
                 actionCode === "RELEASE" -> {
 
-                    var dispatcherTwo = MyDispatcherTwo(p0!!.baseContext)
-                    dispatcherTwo.onInterceptTouchEvent(event)
-
-                    Log.d(FOO, "RELEASE on  $xPos - $yPos")
 
                     mouseEventList?.add(
                         MouseEvent(
@@ -169,9 +239,8 @@ class MyWindowCallback() : Window.Callback {
                             actionCode
                         )
                     )
-                    //     Log.d(FOO, "Wrting on file $mouseEventList")
 
-                    var a = App(p0)
+                    var a = App(activity)
                     var selectedComponent = SelectedComponent()
                     var scenario = Scenario(
                         "CLICKED",
@@ -209,7 +278,7 @@ class MyWindowCallback() : Window.Callback {
     private fun ReadJsonOnMouseEvent(obj: JSONObject) {
         var convertedObject: JsonObject? = null
         try {
-            var fileInputStream = p0?.openFileInput(FILE_NAME)
+            var fileInputStream = activity?.openFileInput(FILE_NAME)
             val inputBuffer = CharArray(READ_BLOCK_SIZE)
             val InputRead = InputStreamReader(fileInputStream)
             var s: String? = ""
@@ -242,8 +311,8 @@ class MyWindowCallback() : Window.Callback {
         var mouseEvent: ArrayList<MouseEvent> = arrayListOf()
         mouseEvent.add(MouseEvent(null, null, null, null))
 
-        var d = Device(p0)
-        var a = App(p0)
+        var d = Device(activity)
+        var a = App(activity)
         var device = DeviceConfigured(
             true,
             d.releaseBuildVersion,
@@ -313,7 +382,7 @@ class MyWindowCallback() : Window.Callback {
         )
 
 
-        WriteCaseSenarioJson().writeCaseSenarioJson(obj.toJSON()!!, p0)
+        WriteCaseSenarioJson().writeCaseSenarioJson(obj.toJSON()!!, activity)
 
     }
 
@@ -420,8 +489,8 @@ class MyWindowCallback() : Window.Callback {
         var mouseEvent: ArrayList<MouseEvent> = arrayListOf()
         mouseEvent.add(MouseEvent(null, null, null, null))
 
-        var d = Device(p0)
-        var a = App(p0)
+        var d = Device(activity)
+        var a = App(activity)
         var device = DeviceConfigured(
             true,
             d.releaseBuildVersion,
@@ -484,7 +553,7 @@ class MyWindowCallback() : Window.Callback {
         )
 
 
-        WriteCaseSenarioJson().writeCaseSenarioJson(obj.toJSON()!!, p0)
+        WriteCaseSenarioJson().writeCaseSenarioJson(obj.toJSON()!!, activity)
 
     }
 
