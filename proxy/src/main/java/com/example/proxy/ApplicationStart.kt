@@ -2,8 +2,13 @@ package com.example.proxy
 
 import android.app.Activity
 import android.app.Application
+import android.app.UiAutomation
 import android.os.Bundle
 import android.view.Window
+
+
+
+
 
 
 open class ApplicationStart : Application(), Application.ActivityLifecycleCallbacks {
@@ -26,6 +31,10 @@ open class ApplicationStart : Application(), Application.ActivityLifecycleCallba
         val localCallback: Window.Callback = win.callback
         win.callback = MyWindowCallback(localCallback, p0)
         (win.callback as MyWindowCallback).writeFileFirstTime()
+
+
+
+
 
     }
 

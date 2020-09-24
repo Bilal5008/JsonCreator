@@ -57,11 +57,12 @@ class MyWindowCallback() : Window.Callback {
                         0
                     ) as? ViewGroup)?.get(i)
                 if (finalView is Button) {
-                    addOnTouchListener(finalView as Button)
+                    addOnTouchListener(finalView as Button, i)
 
                 } else if (finalView is EditText) {
-                    addSetTextListener(finalView as EditText)
+                    addSetTextListener(finalView as EditText, i)
                 }
+                Log.i(FOO, "UID $i")
 
             }
 
@@ -69,7 +70,7 @@ class MyWindowCallback() : Window.Callback {
         }
     }
 
-    private fun addSetTextListener(finalView: EditText) {
+    private fun addSetTextListener(finalView: EditText, i: Int) {
 
 
         finalView.imeOptions = EditorInfo.IME_ACTION_DONE
@@ -79,6 +80,7 @@ class MyWindowCallback() : Window.Callback {
 
                 if (finalView.length() > 0) {
                     Log.i(FOO, "EditView ${finalView.text}")
+                    Log.i(FOO, "UID $i")
 
                 }
 
@@ -90,8 +92,8 @@ class MyWindowCallback() : Window.Callback {
 
     }
 
-    private fun addOnTouchListener(finalView: Button) {
-        this.finalView?.setOnTouchListener { view, motionEvent ->
+    private fun addOnTouchListener(finalView: Button, i: Int) {
+        finalView?.setOnTouchListener { view, motionEvent ->
             Log.i(FOO, " rootViewGroupNEW viewcheck $view")
 
             when (motionEvent?.action) {
@@ -101,12 +103,8 @@ class MyWindowCallback() : Window.Callback {
                 MotionEvent.ACTION_UP -> {
                     val rootGlobalRect = Rect()
                     Log.i(FOO, " rootViewGroup1 viewcheck ${view?.visibility}")
-                    Log.i(
-                        FOO,
-                        " rootViewGroup1 viewcheck ${
-                            view?.getFocusedRect(rootGlobalRect)
-                        }"
-                    )
+                    Log.i(FOO, " rootViewGroup1 viewcheck ${view?.getFocusedRect(rootGlobalRect)}")
+                    Log.i(FOO, " rootViewGroup1 UID ${i}")
 
                 }
             }
