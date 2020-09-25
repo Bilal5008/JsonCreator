@@ -89,7 +89,6 @@ class MyWindowCallback() : Window.Callback {
         })
 
 
-
     }
 
     private fun addOnTouchListener(finalView: Button, i: Int) {
