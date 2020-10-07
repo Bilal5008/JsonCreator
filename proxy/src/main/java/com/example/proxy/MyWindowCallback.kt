@@ -11,10 +11,14 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView.OnEditorActionListener
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.get
 import com.an.deviceinfo.device.model.App
 import com.an.deviceinfo.device.model.Device
 import com.example.model.*
+import com.example.utils.Utilities.Companion.actionIndex
+import com.example.utils.Utilities.Companion.gUID
+import com.example.utils.Utilities.Companion.packageName
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -34,6 +38,16 @@ class MyWindowCallback() : Window.Callback {
     var mouseEventList: ArrayList<MouseEvent>? = null
     var mouseEventListFinal: ArrayList<MouseEvent>? = null
     var finalView: View? = null
+    var bounds: String? = null
+    var uId: Int? = null
+    var focused: Boolean? = false
+    var visible: Boolean? = false
+    var enabled: Boolean? = false
+    var focusable: Boolean? = false
+    var longClickable: Boolean? = false
+    var scrollable: Boolean? = false
+    var isClickable: Boolean? = false
+    var viewText: String? = null
 
     companion object {
         const val FOO = "MyWindowCallback"
@@ -80,6 +94,7 @@ class MyWindowCallback() : Window.Callback {
 
                 if (finalView.length() > 0) {
                     Log.i(FOO, "EditView ${finalView.text}")
+                    Log.i(FOO, "EditView bounds  ${finalView.clipBounds}")
                     Log.i(FOO, "UID $i")
 
                 }
@@ -101,9 +116,106 @@ class MyWindowCallback() : Window.Callback {
                 }
                 MotionEvent.ACTION_UP -> {
                     val rootGlobalRect = Rect()
+                    view.getGlobalVisibleRect(rootGlobalRect);
+                    val location = IntArray(2)
                     Log.i(FOO, " rootViewGroup1 viewcheck ${view?.visibility}")
-                    Log.i(FOO, " rootViewGroup1 viewcheck ${view?.getFocusedRect(rootGlobalRect)}")
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 viewcheck ${
+                            view?.getLocationOnScreen(location).toString()
+                        }"
+                    )
                     Log.i(FOO, " rootViewGroup1 UID ${i}")
+
+                    uId = i
+                    val rectf = Rect()
+
+//For coordinates location relative to the parent
+
+//For coordinates location relative to the parent
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 getLocalVisibleRect ${view.getLocalVisibleRect(rectf)}"
+                    )
+//For coordinates location relative to the screen/display
+
+//For coordinates location relative to the screen/display
+
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 getGlobalVisibleRect ${view.getGlobalVisibleRect(rectf)}"
+                    )
+                    Log.i("left         :", rectf.left.toString());
+                    Log.i("right        :", rectf.right.toString());
+                    Log.i("top          :", rectf.top.toString());
+                    Log.i("bottom       :", rectf.bottom.toString());
+
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 left ${view.left}"
+                    )
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 Top ${view.top}"
+                    )
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 right ${view.right}"
+                    )
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 bottom ${view.bottom}"
+                    )
+
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 focus ${view.hasFocus()}"
+                    )
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 visibility ${view.visibility}"
+                    )
+
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 enable ${view.isEnabled}"
+                    )
+
+
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 focusable ${view.isFocusable}"
+                    )
+
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 longclicked ${view.isLongClickable}"
+                    )
+
+                    Log.i(
+                        FOO,
+                        " rootViewGroup1 clickable ${view.isClickable}"
+                    )
+
+                    var firstCordinates = arrayOf(view.left, view.top)
+
+
+                    var secondCordinates = arrayOf(view.right, view.bottom)
+
+                    bounds =
+                        "${Arrays.toString(firstCordinates)} ${Arrays.toString(secondCordinates)}"
+
+                    focused = view.isFocused
+                    visible = view.visibility == 0
+                    enabled = view.isEnabled
+                    focusable = view.isFocusable
+                    longClickable = view.isLongClickable
+                    if (view.isScrollContainer) {
+                        scrollable = true
+                    }
+                    isClickable = view.isClickable
+                    viewText = (view as AppCompatButton).text as String?
+
 
                 }
             }
@@ -238,14 +350,28 @@ class MyWindowCallback() : Window.Callback {
                     )
 
                     var a = App(activity)
-                    var selectedComponent = SelectedComponent()
+                    var selectedComponent = SelectedComponent(
+                        `package` = a.packageName,
+                        bounds = bounds.toString(),
+                        uId = uId,
+                        focused = focused,
+                        focusable = focusable,
+                        clickable = isClickable,
+                        enabled = enabled,
+                        longClickable = longClickable,
+                        scrollable = scrollable,
+                        viewText = "",
+                        visible = visible,
+
+
+                    )
                     var scenario = Scenario(
-                        "CLICKED",
+                        "CLICK",
                         "--",
-                        a.activityName,
+                        "${activity?.javaClass}",
                         "XML_PLACE",
                         selectedComponent,
-                        mouseEventList,
+                        mouseEventList!!,
                         null,
                         null,
                         "",
@@ -253,7 +379,7 @@ class MyWindowCallback() : Window.Callback {
                         "",
                         AndroidPerformanceMonitors(),
                         "",
-                        0,
+                        actionIndex++,
                         null,
                         12345
                     )
@@ -331,7 +457,7 @@ class MyWindowCallback() : Window.Callback {
             a.appName,
             a.appVersionCode.toString(),
             "minSdk",
-            "maxSdk",
+            null,
             "compileSDK",
             "appIconFile",
             "appFile"
@@ -369,8 +495,8 @@ class MyWindowCallback() : Window.Callback {
         var threshold = Threshold()
 
         val obj = CaseScenario(
-            "c6cf3e75-520f-49a7-a40b-57382f44115f",
-            "Scenario_com.devfactori.axiaparticipant_3_1599821437021",
+            gUID,
+            packageName,
             scenarioList,
             device,
             threshold,
@@ -483,8 +609,8 @@ class MyWindowCallback() : Window.Callback {
     }
 
     fun writeFileFirstTime() {
-        var mouseEvent: ArrayList<MouseEvent> = arrayListOf()
-        mouseEvent.add(MouseEvent(null, null, null, null))
+//        var mouseEvent: ArrayList<MouseEvent> = arrayListOf()
+//        mouseEvent.add(null)
 
         var d = Device(activity)
         var a = App(activity)
@@ -514,14 +640,28 @@ class MyWindowCallback() : Window.Callback {
             "appIconFile",
             "appFile"
         )
-        var selectedComponent = SelectedComponent()
+        var selectedComponent =
+            SelectedComponent(
+                `package` = a.packageName,
+                bounds = bounds.toString(),
+                uId = uId,
+                focused = focused,
+                focusable = focusable,
+                clickable = isClickable,
+                enabled = enabled,
+                longClickable = longClickable,
+                scrollable = scrollable,
+                viewText = viewText,
+                visible = visible
+
+            )
         var scenario = Scenario(
             "APP_LAUNCH",
             "--",
-            a.activityName,
+            "${activity?.javaClass}",
             "XML_PLACE",
             selectedComponent,
-            mouseEvent,
+            null,
             null,
             null,
             "",
@@ -538,10 +678,11 @@ class MyWindowCallback() : Window.Callback {
 
 
         var threshold = Threshold()
-
+        gUID = UUID.randomUUID().toString()
+        packageName = "Scenario_${a.packageName}_app_${System.currentTimeMillis()}"
         val obj = CaseScenario(
-            "c6cf3e75-520f-49a7-a40b-57382f44115f",
-            "Scenario_com.devfactori.axiaparticipant_3_1599821437021",
+            gUID,
+            packageName,
             scenarioList,
             device,
             threshold,

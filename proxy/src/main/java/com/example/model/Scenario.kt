@@ -13,7 +13,7 @@ class Scenario {
     var activityName: String? = null
     var xml: String? = null
     var selectedComponent: SelectedComponent? = null
-    var mouseEvents: ArrayList<MouseEvent>?
+    var mouseEvents: ArrayList<MouseEvent>?= null
     var inVChecksumGroup: String? = null
     var outVChecksumGroup: String? = null
     var snapshotLocation: String? = null
@@ -36,7 +36,7 @@ class Scenario {
         outVChecksumGroup: String?,
         snapshotLocation: String?,
         snapshotLocation_before: String?,
-        snapshotLocation_after: String?,
+        snapshotLocation_after: String,
         androidPerformanceMonitors: AndroidPerformanceMonitors?,
         predictedActivityName: String?,
         actionIndex: Int,
@@ -64,7 +64,7 @@ class Scenario {
 
 
     fun toJSON(): JSONObject? {
-        val gson = GsonBuilder().create()
+        val gson = GsonBuilder().serializeNulls().create()
         val jo = JSONObject()
         jo["action"] = action
         jo["actionValue"] = actionValue

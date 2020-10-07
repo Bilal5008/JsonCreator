@@ -19,11 +19,11 @@ class MouseEvent {
 
 
     fun toJSON(): JSONObject? {
-        val gson = GsonBuilder().create()
+        val gson = GsonBuilder().serializeNulls().create()
         val jo = JSONObject()
         jo["time"] = time
-        jo["pointX"] = pointX
-        jo["pointY"] = pointY
+        jo["point_x"] = pointX
+        jo["point_y"] = pointY
         jo["mouseEventType"] = mouseEventType
 
 

@@ -33,8 +33,9 @@ class CaseScenario {
     }
 
     fun toJSON(): JSONObject? {
-        val gson = GsonBuilder().create()
+        val gson = GsonBuilder().serializeNulls().create()
         val jo = JSONObject()
+
         jo["scenarioGUID"] = scenarioGUID
         jo["scenarioName"] = scenarioName
         jo["device"] = gson.toJsonTree(deviceConfigured).asJsonObject
