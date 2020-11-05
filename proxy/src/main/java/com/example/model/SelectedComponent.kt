@@ -1,11 +1,20 @@
 package com.example.model
 
 
-
-
 class SelectedComponent {
 
-    constructor(`package`: String?, bounds: String?, uId: Int?, focused : Boolean? ,visible : Boolean?,enabled : Boolean?,focusable : Boolean?, clickable  : Boolean?, longClickable  : Boolean?,scrollable  : Boolean?, viewText : String? ) {
+    constructor(
+        `package`: String?,
+        bounds: String?,
+        uId: Int?,
+        focused: Boolean?,
+        visible: Boolean?,
+        enabled: Boolean?,
+        focusable: Boolean?,
+        clickable: Boolean?,
+        longClickable: Boolean?,
+        scrollable: Boolean?
+    ) {
 
 
         this.`package` = `package`
@@ -18,7 +27,7 @@ class SelectedComponent {
         this.clickable = clickable!!
         this.longClickable = longClickable!!
         this.scrollable = scrollable!!
-        this.text = viewText
+
 
     }
     //    constructor(
@@ -137,20 +146,20 @@ class SelectedComponent {
     var clickable = false
     var contentDesc: String? = ""
     var xpath: String? = "dummy"
-    var xpathChecksum: String? = ""
+    var xpathChecksum: String? = "0"
     var prioritySize = 0
     var training = false
     var groupPriority = 0
-    var uid : Int? = 0
+    var uid: Int? = 0
     var checkable = false
     var parentUID = 0
     var longClickable = false
     var microVisible = false
     var scrollable = false
     var useEnterKey = false
-    var vertexStates: List<String>? = null
+    var vertexStates: Array<String>? = arrayOf()
     var resourceId: String? = null
-    var stateStringWithoutBounds: String? = null
+    var stateStringWithoutBounds: String? = ""
     var activeFortraversal = false
     var calculatedActionable = false
     var crawlerTraversal = false
@@ -158,7 +167,7 @@ class SelectedComponent {
     var discoveryStage: String? = null
     var calculatedSize = 0
     var allowManyTraversal = false
-    var actionSteps: ActionSteps? = null
+    var actionSteps: ActionSteps? = ActionSteps()
     var instance = 0
     var `package`: String? = null
     var type: String? = ""

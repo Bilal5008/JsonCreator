@@ -10,6 +10,7 @@ companion object
     var bounds : String?  = null
     var gUID : String?  = null
     var packageName : String?  = null
+    var file64Byte : String ? =null
 
      fun isViewContains(view: View, rx: Int, ry: Int): Boolean {
         val l = IntArray(2)

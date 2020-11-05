@@ -6,7 +6,7 @@ class AppInfo {
     var appName: String? = null
     var appVersion: String? = null
     var minSDK: String? = null
-    var maxSDK: String? = null
+    var maxSDK: String?= null
     var compileSDK: String? = null
     var appIconFile: String? = null
     var appFile: String? = null
